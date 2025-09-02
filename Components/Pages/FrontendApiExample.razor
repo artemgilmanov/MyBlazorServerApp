@@ -3,8 +3,6 @@
 
 @inject IHttpClientFactory HttpClientFactory
 
-
-
 <PageTitle>FrontendApiExample</PageTitle>
 
 <h1>FrontendApiExample</h1>
@@ -12,10 +10,11 @@
 <p>@_message</p>
 
 
-<button class="btn btn-primary" @onclick="GetApiMessage">Get Request</button>
+<input @bind="_inputValue" placeholder="Enter a string" />
+<button @onclick="CalculateInstallment">Calculate Installment</button>
 <br><br>
-<input @bind="_inputValue" placeholder="Enter a string for the post" />
-<button @onclick="SendPostRequest">Post Request</button>
+<input @bind="_inputValue" placeholder="Enter a string" />
+<button @onclick="CalculateDuration">Calculate Duration</button>
 <p>@_responseMessage</p>
 
 
@@ -25,18 +24,19 @@
     private string? _responseMessage;
 
 
-    private async void GetApiMessage()
-    {
-        var client = HttpClientFactory.CreateClient("MyHttpClient");
-        _message = await client.GetStringAsync("api/sample");
-        StateHasChanged();
-    }
+  private async void CalculateInstallment()
+  {
+    var client = HttpClientFactory.CreateClient("MyHttpClient");
+    var response = await client.PostAsJsonAsync("api/calculate-duration", _inputValue);
+    _responseMessage = await response.Content.ReadAsStringAsync();
+    StateHasChanged();
+  }
 
-    private async void SendPostRequest()
-    {
-        var client = HttpClientFactory.CreateClient("MyHttpClient");
-        var response = await client.PostAsJsonAsync("api/sample", _inputValue);
-        _responseMessage = await response.Content.ReadAsStringAsync();
-        StateHasChanged();
-    }
+  private async void CalculateDuration()
+  {
+      var client = HttpClientFactory.CreateClient("MyHttpClient");
+      var response = await client.PostAsJsonAsync("api/calculate-duration", _inputValue);
+      _responseMessage = await response.Content.ReadAsStringAsync();
+      StateHasChanged();
+  }
 }

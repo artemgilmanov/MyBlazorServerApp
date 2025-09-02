@@ -1,6 +1,9 @@
 using MyBlazorServerApp.Components;
+using MyBlazorServerApp.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<ICalculationRepository, CalculationRepository>();
 
 builder.Services.AddControllersWithViews();
 // Add services to the container.
