@@ -1,49 +1,40 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using MyBlazorServerApp.Infrastructure;
+using MyBlazorServerApp.Commands;
 using MyBlazorServerApp.Resources;
 
 [ApiController]
 [Route("api/[controller]")]
 public class CalculatorController : ControllerBase
 {
-  private readonly ICalculationRepository _calculationRepository;
+  private readonly IMediator _mediator;
 
-  public CalculatorController(ICalculationRepository calculationRepository)
+  public CalculatorController(IMediator mediator)
   {
-    _calculationRepository = calculationRepository;
+    _mediator = mediator;
   }
 
   /// <summary>
-  /// Calculates the monthly installment amount.
+  /// Calculates the monthly installment amount using a command.
   /// </summary>
-  /// <param name="request">The request containing the total amount and number of installments.</param>
+  /// <param name="command">The command containing the total amount and number of installments.</param>
   /// <returns>The calculated monthly installment.</returns>
   [HttpPost("calculate-installment")]
-  public ActionResult<CalculationResult> CalculateInstallment([FromBody] CalculateInstallmentRequest request)
+  public async Task<ActionResult<CalculationResult>> CalculateInstallment([FromBody] CalculateInstallmentRequest request)
   {
-    if (request.Amount <= 0 || request.NumberOfInstallments <= 0)
-    {
-      return BadRequest("Amount and number of installments must be greater than zero.");
-    }
-
-    var monthlyInstallment = _calculationRepository.CalculateInstallment(request.Amount, request.NumberOfInstallments);
-    return Ok(new CalculationResult { Result = monthlyInstallment });
+    return await _mediator.Send(
+      new CalculateInstallmentCommand { Amount = request.Amount, NumberOfInstallments = request.NumberOfInstallments } );
   }
 
   /// <summary>
-  /// Calculates the number of installments (duration).
+  /// Calculates the number of installments (duration) using a command.
   /// </summary>
-  /// <param name="request">The request containing the total amount and monthly installment amount.</param>
+  /// <param name="command">The command containing the total amount and monthly installment amount.</param>
   /// <returns>The calculated number of installments.</returns>
   [HttpPost("calculate-duration")]
-  public ActionResult<CalculationResult> CalculateDuration([FromBody] CalculateDurationRequest request)
+  public async Task<ActionResult<CalculationResult>> CalculateDuration([FromBody] CalculateDurationRequest request)
   {
-    if (request.Amount <= 0 || request.MonthlyInstallment <= 0)
-    {
-      return BadRequest("Amount and monthly installment must be greater than zero.");
-    }
-
-    var numberOfInstallments = _calculationRepository.CalculateDuration(request.Amount, request.MonthlyInstallment);
-    return Ok(new CalculationResult { Result = numberOfInstallments });
+    return await _mediator.Send(
+      new CalculateDurationCommand { Amount = request.Amount, MonthlyInstallment = request.MonthlyInstallment });
   }
 }
