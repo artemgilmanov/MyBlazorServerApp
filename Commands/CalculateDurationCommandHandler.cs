@@ -14,11 +14,6 @@ public class CalculateDurationCommandHandler : IRequestHandler<CalculateDuration
 
   public Task<CalculationResult> Handle(CalculateDurationCommand request, CancellationToken cancellationToken)
   {
-    if (request.Amount <= 0 || request.MonthlyInstallment <= 0)
-    {
-      throw new ArgumentException("Amount and monthly installment must be greater than zero.");
-    }
-
     var numberOfInstallments = _calculationRepository.CalculateDuration(request.Amount, request.MonthlyInstallment);
     return Task.FromResult(new CalculationResult { Result = numberOfInstallments });
   }

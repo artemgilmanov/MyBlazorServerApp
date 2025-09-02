@@ -14,11 +14,6 @@ public class CalculateInstallmentCommandHandler : IRequestHandler<CalculateInsta
 
   public Task<CalculationResult> Handle(CalculateInstallmentCommand request, CancellationToken cancellationToken)
   {
-    if (request.Amount <= 0 || request.NumberOfInstallments <= 0)
-    {
-      throw new ArgumentException("Amount and number of installments must be greater than zero.");
-    }
-
     var monthlyInstallment = _calculationRepository.CalculateInstallment(request.Amount, request.NumberOfInstallments);
     return Task.FromResult(new CalculationResult { Result = monthlyInstallment });
   }

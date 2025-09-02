@@ -1,10 +1,12 @@
 ﻿@page "/"
 @using MyBlazorServerApp.Resources
+@using MyBlazorServerApp.Commands
+@using System.Text.Json
 @rendermode InteractiveServer
 
 @inject IHttpClientFactory HttpClientFactory
 
-<PageTitle>FrontendApiExample</PageTitle>
+<PageTitle>API Calculator</PageTitle>
 
 <div class="container mx-auto px-4 py-8">
   <div class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-lg">
@@ -29,10 +31,24 @@
         <div class="flex flex-col">
           <label for="amount1" class="text-sm font-semibold text-gray-700 mb-1">Total Amount</label>
           <input type="number" @bind="amount" id="amount1" class="form-input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., 1000" />
+          @if (validationErrors.ContainsKey("Amount"))
+          {
+            @foreach (var error in validationErrors["Amount"])
+            {
+              <span class="text-red-500 text-xs mt-1">@error</span>
+            }
+          }
         </div>
         <div class="flex flex-col">
           <label for="installments" class="text-sm font-semibold text-gray-700 mb-1">Number of Installments</label>
           <input type="number" @bind="numberOfInstallments" id="installments" class="form-input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., 12" />
+          @if (validationErrors.ContainsKey("NumberOfInstallments"))
+          {
+            @foreach (var error in validationErrors["NumberOfInstallments"])
+            {
+              <span class="text-red-500 text-xs mt-1">@error</span>
+            }
+          }
         </div>
         <button @onclick="CalculateInstallment"
                 class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-md shadow-md transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
@@ -46,10 +62,24 @@
         <div class="flex flex-col">
           <label for="amount2" class="text-sm font-semibold text-gray-700 mb-1">Total Amount</label>
           <input type="number" @bind="amount" id="amount2" class="form-input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., 1000" />
+          @if (validationErrors.ContainsKey("Amount"))
+          {
+            @foreach (var error in validationErrors["Amount"])
+            {
+              <span class="text-red-500 text-xs mt-1">@error</span>
+            }
+          }
         </div>
         <div class="flex flex-col">
           <label for="monthlyRate" class="text-sm font-semibold text-gray-700 mb-1">Monthly Installment</label>
           <input type="number" @bind="monthlyInstallment" id="monthlyRate" class="form-input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., 50" />
+          @if (validationErrors.ContainsKey("MonthlyInstallment"))
+          {
+            @foreach (var error in validationErrors["MonthlyInstallment"])
+            {
+              <span class="text-red-500 text-xs mt-1">@error</span>
+            }
+          }
         </div>
         <button @onclick="CalculateDuration"
                 class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-md shadow-md transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
@@ -72,6 +102,7 @@
   private int numberOfInstallments;
   private double monthlyInstallment;
   private string? responseMessage;
+  private Dictionary<string, List<string>> validationErrors = new();
   private CalculationMode currentMode = CalculationMode.Installment;
 
   private enum CalculationMode
@@ -83,18 +114,17 @@
   private void SetMode(CalculationMode mode)
   {
     currentMode = mode;
-    responseMessage = string.Empty;
+    responseMessage = string.Empty; // Clear previous result when changing modes
+    validationErrors.Clear();
   }
 
   private async Task CalculateInstallment()
   {
-    if (amount <= 0 || numberOfInstallments <= 0)
-    {
-      responseMessage = "Please enter valid values for amount and number of installments.";
-      return;
-    }
+    // Clear previous messages and validation errors
+    responseMessage = string.Empty;
+    validationErrors.Clear();
 
-    var request = new CalculateInstallmentRequest { Amount = amount, NumberOfInstallments = numberOfInstallments };
+    var request = new CalculateInstallmentCommand { Amount = amount, NumberOfInstallments = numberOfInstallments };
     var client = HttpClientFactory.CreateClient("MyHttpClient");
     try
     {
@@ -103,6 +133,27 @@
       {
         var resultDto = await response.Content.ReadFromJsonAsync<CalculationResult>();
         responseMessage = $"The monthly installment is: ${resultDto.Result:F2}";
+      }
+      else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+      {
+        // Parse the JSON error response from the API
+        var errorResponse = await response.Content.ReadAsStringAsync();
+        var errorDto = JsonDocument.Parse(errorResponse);
+
+        // Get the errors from the "errors" property in the JSON.
+        if (errorDto.RootElement.TryGetProperty("errors", out var errorsElement))
+        {
+          foreach (var errorProperty in errorsElement.EnumerateObject())
+          {
+            var key = errorProperty.Name;
+            var errorList = new List<string>();
+            foreach (var error in errorProperty.Value.EnumerateArray())
+            {
+              errorList.Add(error.GetString()!);
+            }
+            validationErrors[key] = errorList;
+          }
+        }
       }
       else
       {
@@ -118,13 +169,11 @@
 
   private async Task CalculateDuration()
   {
-    if (amount <= 0 || monthlyInstallment <= 0)
-    {
-      responseMessage = "Please enter valid values for amount and monthly installment.";
-      return;
-    }
+    // Clear previous messages and validation errors
+    responseMessage = string.Empty;
+    validationErrors.Clear();
 
-    var request = new CalculateDurationRequest { Amount = amount, MonthlyInstallment = monthlyInstallment };
+    var request = new CalculateDurationCommand { Amount = amount, MonthlyInstallment = monthlyInstallment };
     var client = HttpClientFactory.CreateClient("MyHttpClient");
     try
     {
@@ -133,6 +182,27 @@
       {
         var resultDto = await response.Content.ReadFromJsonAsync<CalculationResult>();
         responseMessage = $"The number of installments is: {resultDto.Result:F0}";
+      }
+      else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+      {
+        // Parse the JSON error response from the API
+        var errorResponse = await response.Content.ReadAsStringAsync();
+        var errorDto = JsonDocument.Parse(errorResponse);
+
+        // Get the errors from the "errors" property in the JSON.
+        if (errorDto.RootElement.TryGetProperty("errors", out var errorsElement))
+        {
+          foreach (var errorProperty in errorsElement.EnumerateObject())
+          {
+            var key = errorProperty.Name;
+            var errorList = new List<string>();
+            foreach (var error in errorProperty.Value.EnumerateArray())
+            {
+              errorList.Add(error.GetString()!);
+            }
+            validationErrors[key] = errorList;
+          }
+        }
       }
       else
       {
@@ -144,5 +214,11 @@
     {
       responseMessage = $"An error occurred: {ex.Message}";
     }
+  }
+
+  // DTOs to match the controller's requirements
+  public class CalculationResult
+  {
+    public double Result { get; set; }
   }
 }
