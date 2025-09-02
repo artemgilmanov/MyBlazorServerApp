@@ -1,0 +1,42 @@
+﻿@page "/frontendApiExample"
+@rendermode InteractiveServer
+
+@inject IHttpClientFactory HttpClientFactory
+
+
+
+<PageTitle>FrontendApiExample</PageTitle>
+
+<h1>FrontendApiExample</h1>
+
+<p>@_message</p>
+
+
+<button class="btn btn-primary" @onclick="GetApiMessage">Get Request</button>
+<br><br>
+<input @bind="_inputValue" placeholder="Enter a string for the post" />
+<button @onclick="SendPostRequest">Post Request</button>
+<p>@_responseMessage</p>
+
+
+@code {
+    private string? _message;
+    private string _inputValue = string.Empty;
+    private string? _responseMessage;
+
+
+    private async void GetApiMessage()
+    {
+        var client = HttpClientFactory.CreateClient("MyHttpClient");
+        _message = await client.GetStringAsync("api/sample");
+        StateHasChanged();
+    }
+
+    private async void SendPostRequest()
+    {
+        var client = HttpClientFactory.CreateClient("MyHttpClient");
+        var response = await client.PostAsJsonAsync("api/sample", _inputValue);
+        _responseMessage = await response.Content.ReadAsStringAsync();
+        StateHasChanged();
+    }
+}
