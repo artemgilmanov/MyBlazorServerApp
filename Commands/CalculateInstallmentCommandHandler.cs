@@ -3,7 +3,7 @@ using MyBlazorServerApp.Commands;
 using MyBlazorServerApp.Infrastructure;
 using MyBlazorServerApp.Resources;
 
-public class CalculateInstallmentCommandHandler : IRequestHandler<CalculateInstallmentCommand, CalculationResult>
+public class CalculateInstallmentCommandHandler : IRequestHandler<CalculateInstallmentCommand, Installment>
 {
   private readonly ICalculationRepository _calculationRepository;
 
@@ -12,9 +12,9 @@ public class CalculateInstallmentCommandHandler : IRequestHandler<CalculateInsta
     _calculationRepository = calculationRepository;
   }
 
-  public Task<CalculationResult> Handle(CalculateInstallmentCommand request, CancellationToken cancellationToken)
+  public Task<Installment> Handle(CalculateInstallmentCommand request, CancellationToken cancellationToken)
   {
     var monthlyInstallment = _calculationRepository.CalculateInstallment(request.Amount, request.NumberOfInstallments);
-    return Task.FromResult(new CalculationResult { Result = monthlyInstallment });
+    return Task.FromResult(new Installment { Result = monthlyInstallment });
   }
 }

@@ -1,0 +1,148 @@
+﻿@page "/saved-calculations"
+@using MyBlazorServerApp.Resources
+@rendermode InteractiveServer
+
+@inject IHttpClientFactory HttpClientFactory
+
+<PageTitle>Saved Calculations</PageTitle>
+
+<div class="container py-5">
+  <div class="card shadow-sm mx-auto" style="max-width: 960px;">
+    <div class="card-body p-4 p-md-5">
+      <h1 class="text-center mb-4 text-dark display-6">Saved Calculations</h1>
+      <p class="text-center text-muted mb-4">A list of all your saved installment and duration calculations.</p>
+
+      <!-- Installment Calculations Section -->
+      <div class="mb-5">
+        <h2 class="h4 text-dark mb-3">Installment Calculations</h2>
+        @if (isLoading)
+        {
+          <div class="text-center text-secondary">Loading...</div>
+        }
+        else if (installmentError != null)
+        {
+          <div class="text-danger text-center">Error loading installment data: @installmentError</div>
+        }
+        else if (installments.Any())
+        {
+          <div class="table-responsive">
+            <table class="table table-striped table-hover rounded-3 overflow-hidden shadow-sm">
+              <thead class="bg-light">
+                <tr>
+                  <th scope="col">Amount</th>
+                  <th scope="col"># Installments</th>
+                  <th scope="col">Monthly Installment</th>
+                  <th scope="col">Saved At</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (var calc in installments)
+                {
+                  <tr>
+                    <td>@calc.Amount.ToString("C2")</td>
+                    <td>@calc.NumberOfInstallments</td>
+                    <td>@calc.Result.ToString("C2")</td>
+                    <td>@calc.Created.ToLocalTime().ToString("g")</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+        else
+        {
+          <div class="text-center text-secondary">No installment calculations saved yet.</div>
+        }
+      </div>
+
+      <!-- Duration Calculations Section -->
+      <div>
+        <h2 class="h4 text-dark mb-3">Duration Calculations</h2>
+        @if (isLoading)
+        {
+          <div class="text-center text-secondary">Loading...</div>
+        }
+        else if (durationError != null)
+        {
+          <div class="text-danger text-center">Error loading duration data: @durationError</div>
+        }
+        else if (durations.Any())
+        {
+          <div class="table-responsive">
+            <table class="table table-striped table-hover rounded-3 overflow-hidden shadow-sm">
+              <thead class="bg-light">
+                <tr>
+                  <th scope="col">Amount</th>
+                  <th scope="col">Monthly Installment</th>
+                  <th scope="col">Duration (Months)</th>
+                  <th scope="col">Saved At</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (var calc in durations)
+                {
+                  <tr>
+                    <td>@calc.Amount.ToString("C2")</td>
+                    <td>@calc.MonthlyInstallment.ToString("C2")</td>
+                    <td>@calc.Result.ToString("F0")</td>
+                    <td>@calc.Created.ToLocalTime().ToString("g")</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+        else
+        {
+          <div class="text-center text-secondary">No duration calculations saved yet.</div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+@code {
+  private List<Installment> installments = new();
+  private List<Duration> durations = new();
+  private string? installmentError;
+  private string? durationError;
+  private bool isLoading = true;
+
+  protected override async Task OnInitializedAsync()
+  {
+    var client = HttpClientFactory.CreateClient("MyHttpClient");
+    try
+    {
+      // Fetch installment data
+      var installmentsResponse = await client.GetAsync("api/Calculator/get-all-installments");
+      if (installmentsResponse.IsSuccessStatusCode)
+      {
+        installments = await installmentsResponse.Content.ReadFromJsonAsync<List<Installment>>() ?? new List<Installment>();
+      }
+      else
+      {
+        installmentError = $"Error: {installmentsResponse.StatusCode}";
+      }
+
+      // Fetch duration data
+      var durationsResponse = await client.GetAsync("api/Calculator/get-all-durations");
+      if (durationsResponse.IsSuccessStatusCode)
+      {
+        durations = await durationsResponse.Content.ReadFromJsonAsync<List<Duration>>() ?? new List<Duration>();
+      }
+      else
+      {
+        durationError = $"Error: {durationsResponse.StatusCode}";
+      }
+    }
+    catch (Exception ex)
+    {
+      installmentError = $"An error occurred: {ex.Message}";
+      durationError = $"An error occurred: {ex.Message}";
+    }
+    finally
+    {
+      isLoading = false;
+    }
+  }
+}

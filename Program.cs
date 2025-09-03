@@ -1,10 +1,13 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using MyBlazorServerApp.Components;
 using MyBlazorServerApp.Infrastructure;
 using Serilog;
 using System.Net;
+using System.Reflection;
 
 var logsDirectory = "Logs";
 if (!Directory.Exists(logsDirectory))
@@ -43,6 +46,16 @@ builder.Services.AddScoped<ICalculationRepository, CalculationRepository>();
 
 // Register Validation.
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+//builder.Services.AddDbContext<Repository>(options =>
+//    options.UseNpgsql(connectionString));
+
+builder.Services.AddDbContext<Repository>(options =>
+    options.UseInMemoryDatabase("MyBlazorServerAppDB"));
+
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
 
 builder.Services.AddHttpClient("MyHttpClient", client =>
 {
