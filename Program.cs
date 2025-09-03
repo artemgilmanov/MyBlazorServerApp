@@ -58,36 +58,8 @@ if (!app.Environment.IsDevelopment())
   app.UseHsts();
 }
 
-app.UseExceptionHandler(exceptionHandlerApp =>
-{
-  exceptionHandlerApp.Run(async context =>
-  {
-    var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
-    var exception = exceptionHandlerPathFeature?.Error;
-
-    if (exception is ValidationException validationException)
-    {
-      Log.Warning("Validation failed for request: {RequestPath} with errors: {@Errors}",
-                    context.Request.Path,
-                    validationException.Errors);
-
-      context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-      context.Response.ContentType = "application/json";
-
-      var errors = new Dictionary<string, List<string>>();
-      foreach (var error in validationException.Errors)
-      {
-        if (!errors.ContainsKey(error.PropertyName))
-        {
-          errors[error.PropertyName] = new List<string>();
-        }
-        errors[error.PropertyName].Add(error.ErrorMessage);
-      }
-
-      await context.Response.WriteAsJsonAsync(new { errors = errors });
-    }
-  });
-});
+// Register ExceptionMiddleware.
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
