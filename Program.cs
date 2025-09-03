@@ -1,11 +1,28 @@
-// This file configures the application services and request pipeline.
-
-using MediatR;
 using FluentValidation;
+using MediatR;
+using Microsoft.AspNetCore.Diagnostics;
 using MyBlazorServerApp.Components;
 using MyBlazorServerApp.Infrastructure;
+using Serilog;
 using System.Net;
-using Microsoft.AspNetCore.Diagnostics;
+
+var logsDirectory = "Logs";
+if (!Directory.Exists(logsDirectory))
+{
+  Directory.CreateDirectory(logsDirectory);
+}
+
+var configuration = new ConfigurationBuilder()
+  .AddJsonFile("appsettings.json")
+  .AddJsonFile("appsettings.Development.json", optional: true)
+  .AddJsonFile("serilog.json")
+  .AddEnvironmentVariables()
+  .Build();
+
+// Configure Serilog to read from the built configuration.
+Log.Logger = new LoggerConfiguration()
+  .ReadFrom.Configuration(configuration)
+  .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +67,10 @@ app.UseExceptionHandler(exceptionHandlerApp =>
 
     if (exception is ValidationException validationException)
     {
+      Log.Warning("Validation failed for request: {RequestPath} with errors: {@Errors}",
+                    context.Request.Path,
+                    validationException.Errors);
+
       context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
       context.Response.ContentType = "application/json";
 
