@@ -6,83 +6,81 @@
 
 @inject IHttpClientFactory HttpClientFactory
 
-<PageTitle>API Calculator</PageTitle>
+<PageTitle>Calculator</PageTitle>
 
-<div class="container mx-auto px-4 py-8">
-  <div class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-    <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">API Calculator</h1>
-    <p class="text-center text-gray-600 mb-8">Choose a mode to begin your calculation.</p>
+<div class="main-container">
+  <div class="calculator-card">
+    <h1 class="title">Calculator</h1>
+    <p class="subtitle">Choose a mode to begin your calculation.</p>
 
     <!-- Mode Selection Tabs -->
-    <div class="flex justify-center mb-6">
+    <div class="tab-group">
       <button @onclick="() => SetMode(CalculationMode.Installment)"
-              class="@(currentMode == CalculationMode.Installment ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800") transition-colors duration-300 py-2 px-6 rounded-l-full font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+              class="tab-button tab-button-left @(currentMode == CalculationMode.Installment ? "tab-active" : "tab-inactive")">
         Calculate Installment
       </button>
       <button @onclick="() => SetMode(CalculationMode.Duration)"
-              class="@(currentMode == CalculationMode.Duration ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800") transition-colors duration-300 py-2 px-6 rounded-r-full font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+              class="tab-button tab-button-right @(currentMode == CalculationMode.Duration ? "tab-active" : "tab-inactive")">
         Calculate Duration
       </button>
     </div>
 
     @if (currentMode == CalculationMode.Installment)
     {
-      <div class="space-y-4">
-        <div class="flex flex-col">
-          <label for="amount1" class="text-sm font-semibold text-gray-700 mb-1">Total Amount</label>
-          <input type="number" @bind="amount" id="amount1" class="form-input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., 1000" />
+      <div class="form-section">
+        <div class="form-field">
+          <label for="amount1" class="form-label">Total Amount</label>
+          <input type="number" @bind="amount" id="amount1" class="form-input" placeholder="e.g., 1000" />
           @if (validationErrors.ContainsKey("Amount"))
           {
             @foreach (var error in validationErrors["Amount"])
             {
-              <span class="text-red-500 text-xs mt-1">@error</span>
+              <span class="error-message">@error</span>
             }
           }
         </div>
-        <div class="flex flex-col">
-          <label for="installments" class="text-sm font-semibold text-gray-700 mb-1">Number of Installments</label>
-          <input type="number" @bind="numberOfInstallments" id="installments" class="form-input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., 12" />
+        <div class="form-field">
+          <label for="installments" class="form-label">Number of Installments</label>
+          <input type="number" @bind="numberOfInstallments" id="installments" class="form-input" placeholder="e.g., 12" />
           @if (validationErrors.ContainsKey("NumberOfInstallments"))
           {
             @foreach (var error in validationErrors["NumberOfInstallments"])
             {
-              <span class="text-red-500 text-xs mt-1">@error</span>
+              <span class="error-message">@error</span>
             }
           }
         </div>
-        <button @onclick="CalculateInstallment"
-                class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-md shadow-md transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+        <button @onclick="CalculateInstallment" class="submit-button">
           Calculate Monthly Installment
         </button>
       </div>
     }
     else
     {
-      <div class="space-y-4">
-        <div class="flex flex-col">
-          <label for="amount2" class="text-sm font-semibold text-gray-700 mb-1">Total Amount</label>
-          <input type="number" @bind="amount" id="amount2" class="form-input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., 1000" />
+      <div class="form-section">
+        <div class="form-field">
+          <label for="amount2" class="form-label">Total Amount</label>
+          <input type="number" @bind="amount" id="amount2" class="form-input" placeholder="e.g., 1000" />
           @if (validationErrors.ContainsKey("Amount"))
           {
             @foreach (var error in validationErrors["Amount"])
             {
-              <span class="text-red-500 text-xs mt-1">@error</span>
+              <span class="error-message">@error</span>
             }
           }
         </div>
-        <div class="flex flex-col">
-          <label for="monthlyRate" class="text-sm font-semibold text-gray-700 mb-1">Monthly Installment</label>
-          <input type="number" @bind="monthlyInstallment" id="monthlyRate" class="form-input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., 50" />
+        <div class="form-field">
+          <label for="monthlyRate" class="form-label">Monthly Installment</label>
+          <input type="number" @bind="monthlyInstallment" id="monthlyRate" class="form-input" placeholder="e.g., 50" />
           @if (validationErrors.ContainsKey("MonthlyInstallment"))
           {
             @foreach (var error in validationErrors["MonthlyInstallment"])
             {
-              <span class="text-red-500 text-xs mt-1">@error</span>
+              <span class="error-message">@error</span>
             }
           }
         </div>
-        <button @onclick="CalculateDuration"
-                class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-md shadow-md transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+        <button @onclick="CalculateDuration" class="submit-button">
           Calculate Duration
         </button>
       </div>
@@ -90,7 +88,7 @@
 
     @if (!string.IsNullOrWhiteSpace(responseMessage))
     {
-      <div class="mt-8 p-4 bg-gray-100 rounded-md text-center text-lg font-medium">
+      <div class="response-message">
         @responseMessage
       </div>
     }
@@ -214,11 +212,5 @@
     {
       responseMessage = $"An error occurred: {ex.Message}";
     }
-  }
-
-  // DTOs to match the controller's requirements
-  public class CalculationResult
-  {
-    public double Result { get; set; }
   }
 }
