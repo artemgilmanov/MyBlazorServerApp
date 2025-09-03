@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using MyBlazorServerApp.Resources
 @using MyBlazorServerApp.Commands
+@using MyBlazorServerApp.Shared
 @using System.Text.Json
 @rendermode InteractiveServer
 
@@ -15,17 +16,17 @@
 
     <!-- Mode Selection Tabs -->
     <div class="tab-group">
-      <button @onclick="() => SetMode(CalculationMode.Installment)"
-              class="tab-button tab-button-left @(currentMode == CalculationMode.Installment ? "tab-active" : "tab-inactive")">
+      <button @onclick="() => SetMode(CalculationType.Installment)"
+              class="tab-button tab-button-left @(currentMode == CalculationType.Installment ? "tab-active" : "tab-inactive")">
         Calculate Installment
       </button>
-      <button @onclick="() => SetMode(CalculationMode.Duration)"
-              class="tab-button tab-button-right @(currentMode == CalculationMode.Duration ? "tab-active" : "tab-inactive")">
+      <button @onclick="() => SetMode(CalculationType.Duration)"
+              class="tab-button tab-button-right @(currentMode == CalculationType.Duration ? "tab-active" : "tab-inactive")">
         Calculate Duration
       </button>
     </div>
 
-    @if (currentMode == CalculationMode.Installment)
+    @if (currentMode == CalculationType.Installment)
     {
       <div class="form-section">
         <div class="form-field">
@@ -101,24 +102,17 @@
   private double monthlyInstallment;
   private string? responseMessage;
   private Dictionary<string, List<string>> validationErrors = new();
-  private CalculationMode currentMode = CalculationMode.Installment;
+  private CalculationType currentMode = CalculationType.Installment;
 
-  private enum CalculationMode
-  {
-    Installment,
-    Duration
-  }
-
-  private void SetMode(CalculationMode mode)
+  private void SetMode(CalculationType mode)
   {
     currentMode = mode;
-    responseMessage = string.Empty; // Clear previous result when changing modes
+    responseMessage = string.Empty;
     validationErrors.Clear();
   }
 
   private async Task CalculateInstallment()
   {
-    // Clear previous messages and validation errors
     responseMessage = string.Empty;
     validationErrors.Clear();
 
@@ -129,8 +123,8 @@
       var response = await client.PostAsJsonAsync("api/Calculator/calculate-installment", request);
       if (response.IsSuccessStatusCode)
       {
-        var resultDto = await response.Content.ReadFromJsonAsync<CalculationResult>();
-        responseMessage = $"The monthly installment is: ${resultDto.Result:F2}";
+        var resultDto = await response.Content.ReadFromJsonAsync<Installment>();
+        responseMessage = $"The monthly installment is: ${resultDto?.Result:F2}";
       }
       else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
       {
@@ -178,8 +172,8 @@
       var response = await client.PostAsJsonAsync("api/Calculator/calculate-duration", request);
       if (response.IsSuccessStatusCode)
       {
-        var resultDto = await response.Content.ReadFromJsonAsync<CalculationResult>();
-        responseMessage = $"The number of installments is: {resultDto.Result:F0}";
+        var resultDto = await response.Content.ReadFromJsonAsync<Duration>();
+        responseMessage = $"The number of installments is: {resultDto?.Result:F0}";
       }
       else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
       {
