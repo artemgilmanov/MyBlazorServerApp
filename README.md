@@ -18,8 +18,6 @@ The application's design is based on several key architectural and design patter
 
 * **Dependency Injection (DI)**: The `Program.cs` file shows extensive use of Dependency Injection. Services like **MediatR**, **AutoMapper**, and various repositories (`ICalculationRepository`, `PostgreSQLRepository`) are registered in the service container. The controllers and other classes then receive these dependencies through their constructors, reducing coupling and making the code easier to test and maintain.
 
----
-
 ## Implemented Design Patterns
 
 The codebase demonstrates the use of several specific design patterns to solve common software design problems.
@@ -37,8 +35,6 @@ The codebase demonstrates the use of several specific design patterns to solve c
 * **Factory Pattern (Implicit)**: Dependency Injection containers often use an implicit form of the Factory pattern. When you request an instance of an interface like `IMediator`, the container internally uses a "factory" to create and provide the correct implementation, abstracting the object creation process.
 
 * **Data Mapper Pattern (via AutoMapper)**: **AutoMapper** is used to map between different object types, specifically between domain entities (`DurationEntity`) and resource models (`Duration`). This pattern keeps the domain models clean and free from presentation or serialization concerns.
-
----
 
 ## Technical Components and Libraries
 
