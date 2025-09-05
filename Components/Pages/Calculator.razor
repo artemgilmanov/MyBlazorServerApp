@@ -10,247 +10,246 @@
 <PageTitle>Calculator</PageTitle>
 
 <div class="main-container">
-    <div class="calculator-card">
-        <h1 class="title">Calculator</h1>
-        <p class="subtitle">Choose a mode to begin your calculation.</p>
+  <div class="calculator-card">
+    <h1 class="title">Calculator</h1>
+    <p class="subtitle">Choose a mode to begin your calculation.</p>
 
-        <!-- Mode Selection Tabs -->
-        <div class="tab-group">
-            <button @onclick="() => SetMode(CalculationType.Installment)"
-                    class="tab-button tab-button-left @(currentMode == CalculationType.Installment ? "tab-active" : "tab-inactive")">
-                Calculate Installment
-            </button>
-            <button @onclick="() => SetMode(CalculationType.Duration)"
-                    class="tab-button tab-button-right @(currentMode == CalculationType.Duration ? "tab-active" : "tab-inactive")">
-                Calculate Duration
-            </button>
-        </div>
-
-        @if (currentMode == CalculationType.Installment)
-        {
-            <div class="form-section">
-                <div class="form-field">
-                    <label for="amount1" class="form-label">Total Amount</label>
-                    <input type="number" @bind="amount" id="amount1" class="form-input" placeholder="e.g., 1000" />
-                    @if (validationErrors.ContainsKey("Amount"))
-                    {
-                        @foreach (var error in validationErrors["Amount"])
-                        {
-                            <span class="error-message">@error</span>
-                        }
-                    }
-                </div>
-                <div class="form-field">
-                    <label for="installments" class="form-label">Number of Installments</label>
-                    <input type="number" @bind="numberOfInstallments" id="installments" class="form-input" placeholder="e.g., 12" />
-                    @if (validationErrors.ContainsKey("NumberOfInstallments"))
-                    {
-                        @foreach (var error in validationErrors["NumberOfInstallments"])
-                        {
-                            <span class="error-message">@error</span>
-                        }
-                    }
-                </div>
-                <button @onclick="CalculateInstallment" class="submit-button">
-                    Calculate Monthly Installment
-                </button>
-            </div>
-        }
-        else
-        {
-            <div class="form-section">
-                <div class="form-field">
-                    <label for="amount2" class="form-label">Total Amount</label>
-                    <input type="number" @bind="amount" id="amount2" class="form-input" placeholder="e.g., 1000" />
-                    @if (validationErrors.ContainsKey("Amount"))
-                    {
-                        @foreach (var error in validationErrors["Amount"])
-                        {
-                            <span class="error-message">@error</span>
-                        }
-                    }
-                </div>
-                <div class="form-field">
-                    <label for="monthlyRate" class="form-label">Monthly Installment</label>
-                    <input type="number" @bind="monthlyInstallment" id="monthlyRate" class="form-input" placeholder="e.g., 50" />
-                    @if (validationErrors.ContainsKey("MonthlyInstallment"))
-                    {
-                        @foreach (var error in validationErrors["MonthlyInstallment"])
-                        {
-                            <span class="error-message">@error</span>
-                        }
-                    }
-                </div>
-                <button @onclick="CalculateDuration" class="submit-button">
-                    Calculate Duration
-                </button>
-            </div>
-        }
-
-        @if (!string.IsNullOrWhiteSpace(responseMessage))
-        {
-            <div class="response-message">
-                @responseMessage
-            </div>
-
-             <div class="d-grid mt-3">
-                      <button @onclick="SaveCalculation" class="btn btn-primary">
-                          Save Calculation
-                      </button>
-                  </div>
-        }
+    <div class="tab-group">
+      <button @onclick="() => SetMode(CalculationType.Installment)"
+              class="tab-button tab-button-left @(currentMode == CalculationType.Installment ? "tab-active" : "tab-inactive")">
+        Calculate Installment
+      </button>
+      <button @onclick="() => SetMode(CalculationType.Duration)"
+              class="tab-button tab-button-right @(currentMode == CalculationType.Duration ? "tab-active" : "tab-inactive")">
+        Calculate Duration
+      </button>
     </div>
+
+    @if (currentMode == CalculationType.Installment)
+    {
+      <div class="form-section">
+        <div class="form-field">
+          <label for="amount1" class="form-label">Total Amount</label>
+          <input type="number" @bind="amount" id="amount1" class="form-input" placeholder="e.g., 1000" />
+          @if (validationErrors.ContainsKey("Amount"))
+          {
+            @foreach (var error in validationErrors["Amount"])
+            {
+              <span class="error-message">@error</span>
+            }
+          }
+        </div>
+        <div class="form-field">
+          <label for="installments" class="form-label">Number of Installments</label>
+          <input type="number" @bind="numberOfInstallments" id="installments" class="form-input" placeholder="e.g., 12" />
+          @if (validationErrors.ContainsKey("NumberOfInstallments"))
+          {
+            @foreach (var error in validationErrors["NumberOfInstallments"])
+            {
+              <span class="error-message">@error</span>
+            }
+          }
+        </div>
+        <button @onclick="CalculateInstallment" class="submit-button">
+          Calculate Monthly Installment
+        </button>
+      </div>
+    }
+    else
+    {
+      <div class="form-section">
+        <div class="form-field">
+          <label for="amount2" class="form-label">Total Amount</label>
+          <input type="number" @bind="amount" id="amount2" class="form-input" placeholder="e.g., 1000" />
+          @if (validationErrors.ContainsKey("Amount"))
+          {
+            @foreach (var error in validationErrors["Amount"])
+            {
+              <span class="error-message">@error</span>
+            }
+          }
+        </div>
+        <div class="form-field">
+          <label for="monthlyRate" class="form-label">Monthly Installment</label>
+          <input type="number" @bind="monthlyInstallment" id="monthlyRate" class="form-input" placeholder="e.g., 50" />
+          @if (validationErrors.ContainsKey("MonthlyInstallment"))
+          {
+            @foreach (var error in validationErrors["MonthlyInstallment"])
+            {
+              <span class="error-message">@error</span>
+            }
+          }
+        </div>
+        <button @onclick="CalculateDuration" class="submit-button">
+          Calculate Duration
+        </button>
+      </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(responseMessage))
+    {
+      <div class="response-message">
+        @responseMessage
+      </div>
+
+      <div class="d-grid mt-3">
+        <button @onclick="SaveCalculation" class="btn btn-primary">
+          Save Calculation
+        </button>
+      </div>
+    }
+  </div>
 </div>
 
 @code {
-    private double amount;
-    private int numberOfInstallments;
-    private double monthlyInstallment;
-    private string? responseMessage;
-    private Dictionary<string, List<string>> validationErrors = new();
-    private CalculationType currentMode = CalculationType.Installment;
+  private double amount;
+  private int numberOfInstallments;
+  private double monthlyInstallment;
+  private string? responseMessage;
+  private Dictionary<string, List<string>> validationErrors = new();
+  private CalculationType currentMode = CalculationType.Installment;
 
-    private object? lastCalculation;
+  private object? lastCalculation;
 
-    private void SetMode(CalculationType mode)
+  private void SetMode(CalculationType mode)
+  {
+    currentMode = mode;
+    responseMessage = string.Empty;
+    validationErrors.Clear();
+    lastCalculation = null;
+  }
+
+  private async Task CalculateInstallment()
+  {
+    // Clear previous messages and validation errors
+    responseMessage = string.Empty;
+    validationErrors.Clear();
+    lastCalculation = null;
+
+    var request = new CalculateInstallmentCommand { Amount = amount, NumberOfInstallments = numberOfInstallments };
+    var client = HttpClientFactory.CreateClient("MyHttpClient");
+    try
     {
-        currentMode = mode;
-        responseMessage = string.Empty;
-        validationErrors.Clear();
+      var response = await client.PostAsJsonAsync("api/Calculator/calculate-installment", request);
+      if (response.IsSuccessStatusCode)
+      {
+        var resultDto = await response.Content.ReadFromJsonAsync<Installment>();
+        responseMessage = $"The monthly installment is: {resultDto.Result}";
+        lastCalculation = resultDto;
+      }
+      else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+      {
+        var errorResponse = await response.Content.ReadAsStringAsync();
+        var errorDto = JsonDocument.Parse(errorResponse);
+        if (errorDto.RootElement.TryGetProperty("errors", out var errorsElement))
+        {
+          foreach (var errorProperty in errorsElement.EnumerateObject())
+          {
+            var key = errorProperty.Name;
+            var errorList = new List<string>();
+            foreach (var error in errorProperty.Value.EnumerateArray())
+            {
+              errorList.Add(error.GetString()!);
+            }
+            validationErrors[key] = errorList;
+          }
+        }
+      }
+      else
+      {
+        var error = await response.Content.ReadAsStringAsync();
+        responseMessage = $"Error: {response.StatusCode} - {error}";
+      }
+    }
+    catch (Exception ex)
+    {
+      responseMessage = $"An error occurred: {ex.Message}";
+    }
+  }
+
+  private async Task CalculateDuration()
+  {
+    // Clear previous messages and validation errors
+    responseMessage = string.Empty;
+    validationErrors.Clear();
+    lastCalculation = null;
+
+    var request = new CalculateDurationCommand { Amount = amount, MonthlyInstallment = monthlyInstallment };
+    var client = HttpClientFactory.CreateClient("MyHttpClient");
+    try
+    {
+      var response = await client.PostAsJsonAsync("api/Calculator/calculate-duration", request);
+      if (response.IsSuccessStatusCode)
+      {
+        var resultDto = await response.Content.ReadFromJsonAsync<Duration>();
+        responseMessage = $"The number of installments is: {resultDto.Result}";
+        lastCalculation = resultDto;
+      }
+      else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+      {
+        var errorResponse = await response.Content.ReadAsStringAsync();
+        var errorDto = JsonDocument.Parse(errorResponse);
+        if (errorDto.RootElement.TryGetProperty("errors", out var errorsElement))
+        {
+          foreach (var errorProperty in errorsElement.EnumerateObject())
+          {
+            var key = errorProperty.Name;
+            var errorList = new List<string>();
+            foreach (var error in errorProperty.Value.EnumerateArray())
+            {
+              errorList.Add(error.GetString()!);
+            }
+            validationErrors[key] = errorList;
+          }
+        }
+      }
+      else
+      {
+        var error = await response.Content.ReadAsStringAsync();
+        responseMessage = $"Error: {response.StatusCode} - {error}";
+      }
+    }
+    catch (Exception ex)
+    {
+      responseMessage = $"An error occurred: {ex.Message}";
+    }
+  }
+
+  private async Task SaveCalculation()
+  {
+    if (lastCalculation == null) return;
+
+    var client = HttpClientFactory.CreateClient("MyHttpClient");
+    try
+    {
+      HttpResponseMessage response;
+      if (lastCalculation is Installment installmentResult)
+      {
+        response = await client.PostAsJsonAsync("api/Calculator/save-installment", installmentResult);
+      }
+      else if (lastCalculation is Duration durationResult)
+      {
+        response = await client.PostAsJsonAsync("api/Calculator/save-duration", durationResult);
+      }
+      else
+      {
+        return;
+      }
+
+      if (response.IsSuccessStatusCode)
+      {
+        responseMessage = "Calculation saved successfully!";
         lastCalculation = null;
+      }
+      else
+      {
+        var error = await response.Content.ReadAsStringAsync();
+        responseMessage = $"Error saving calculation: {response.StatusCode} - {error}";
+      }
     }
-
-    private async Task CalculateInstallment()
+    catch (Exception ex)
     {
-        // Clear previous messages and validation errors
-        responseMessage = string.Empty;
-        validationErrors.Clear();
-        lastCalculation = null;
-
-        var request = new CalculateInstallmentCommand { Amount = amount, NumberOfInstallments = numberOfInstallments };
-        var client = HttpClientFactory.CreateClient("MyHttpClient");
-        try
-        {
-            var response = await client.PostAsJsonAsync("api/Calculator/calculate-installment", request);
-            if (response.IsSuccessStatusCode)
-            {
-                var resultDto = await response.Content.ReadFromJsonAsync<Installment>();
-                responseMessage = $"The monthly installment is: {resultDto.Result}";
-                lastCalculation = resultDto;
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            {
-                var errorResponse = await response.Content.ReadAsStringAsync();
-                var errorDto = JsonDocument.Parse(errorResponse);
-                if (errorDto.RootElement.TryGetProperty("errors", out var errorsElement))
-                {
-                    foreach (var errorProperty in errorsElement.EnumerateObject())
-                    {
-                        var key = errorProperty.Name;
-                        var errorList = new List<string>();
-                        foreach (var error in errorProperty.Value.EnumerateArray())
-                        {
-                            errorList.Add(error.GetString()!);
-                        }
-                        validationErrors[key] = errorList;
-                    }
-                }
-            }
-            else
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                responseMessage = $"Error: {response.StatusCode} - {error}";
-            }
-        }
-        catch (Exception ex)
-        {
-            responseMessage = $"An error occurred: {ex.Message}";
-        }
+      responseMessage = $"An error occurred while saving: {ex.Message}";
     }
-
-    private async Task CalculateDuration()
-    {
-        // Clear previous messages and validation errors
-        responseMessage = string.Empty;
-        validationErrors.Clear();
-        lastCalculation = null;
-
-        var request = new CalculateDurationCommand { Amount = amount, MonthlyInstallment = monthlyInstallment };
-        var client = HttpClientFactory.CreateClient("MyHttpClient");
-        try
-        {
-            var response = await client.PostAsJsonAsync("api/Calculator/calculate-duration", request);
-            if (response.IsSuccessStatusCode)
-            {
-                var resultDto = await response.Content.ReadFromJsonAsync<Duration>();
-                responseMessage = $"The number of installments is: {resultDto.Result}";
-                lastCalculation = resultDto;
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            {
-                var errorResponse = await response.Content.ReadAsStringAsync();
-                var errorDto = JsonDocument.Parse(errorResponse);
-                if (errorDto.RootElement.TryGetProperty("errors", out var errorsElement))
-                {
-                    foreach (var errorProperty in errorsElement.EnumerateObject())
-                    {
-                        var key = errorProperty.Name;
-                        var errorList = new List<string>();
-                        foreach (var error in errorProperty.Value.EnumerateArray())
-                        {
-                            errorList.Add(error.GetString()!);
-                        }
-                        validationErrors[key] = errorList;
-                    }
-                }
-            }
-            else
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                responseMessage = $"Error: {response.StatusCode} - {error}";
-            }
-        }
-        catch (Exception ex)
-        {
-            responseMessage = $"An error occurred: {ex.Message}";
-        }
-    }
-
-    private async Task SaveCalculation()
-    {
-        if (lastCalculation == null) return;
-
-        var client = HttpClientFactory.CreateClient("MyHttpClient");
-        try
-        {
-            HttpResponseMessage response;
-            if (lastCalculation is Installment installmentResult)
-            {
-                response = await client.PostAsJsonAsync("api/Calculator/save-installment", installmentResult);
-            }
-            else if (lastCalculation is Duration durationResult)
-            {
-                response = await client.PostAsJsonAsync("api/Calculator/save-duration", durationResult);
-            }
-            else
-            {
-                return;
-            }
-
-            if (response.IsSuccessStatusCode)
-            {
-                responseMessage = "Calculation saved successfully!";
-                lastCalculation = null;
-            }
-            else
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                responseMessage = $"Error saving calculation: {response.StatusCode} - {error}";
-            }
-        }
-        catch (Exception ex)
-        {
-            responseMessage = $"An error occurred while saving: {ex.Message}";
-        }
-    }
+  }
 }

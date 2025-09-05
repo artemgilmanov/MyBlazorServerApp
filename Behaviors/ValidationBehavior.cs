@@ -13,8 +13,8 @@ public class ValidationBehavior<TRequest, TResponse>(
 {
   private readonly IValidator<TRequest>? _validator = validator;
   private readonly ILogger<ValidationBehavior<TRequest, TResponse>> _logger = logger;
-
-  public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+  public async Task<TResponse> Handle(
+    TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
   {
     _logger.LogInformation("Request {RequestType} started to execute.", typeof(TRequest).Name);
 
@@ -25,6 +25,5 @@ public class ValidationBehavior<TRequest, TResponse>(
     _logger.LogInformation("Request {RequestType} executed successfully.", typeof(TRequest).Name);
 
     return response;
-
   }
 }

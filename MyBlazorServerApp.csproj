@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -31,7 +31,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MyBlazorServerApp.Infrastructure\MyBlazorServerApp.Infrastructure.csproj" />
+    <ProjectReference Include="..\MyBlazorServerApp.Infrastructure.PostgreSQL\MyBlazorServerApp.Infrastructure.PostgreSQL.csproj" />
+    <ProjectReference Include="..\MyBlazorServerApp.Infrastructure\MyBlazorServerApp.Infrastructure.CalculationRepository.csproj" />
     <ProjectReference Include="..\MyBlazorServerApp.Resources\MyBlazorServerApp.Resources.csproj" />
     <ProjectReference Include="..\MyBlazorServerApp.Shared\MyBlazorServerApp.Shared.csproj" />
   </ItemGroup>

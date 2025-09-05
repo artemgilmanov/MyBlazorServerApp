@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyBlazorServerApp.Commands;
 using MyBlazorServerApp.Domain;
-using MyBlazorServerApp.Infrastructure;
+using MyBlazorServerApp.Infrastructure.PostgreSQL;
 using MyBlazorServerApp.Resources;
 
 
@@ -14,10 +14,10 @@ using MyBlazorServerApp.Resources;
 public class CalculatorController : ControllerBase
 {
   private readonly IMediator _mediator;
-  private readonly Repository _repository;
+  private readonly PostgreSQLRepository _repository;
   private readonly IMapper _mapper;
 
-  public CalculatorController(IMediator mediator, Repository repository, IMapper mapper)
+  public CalculatorController(IMediator mediator, PostgreSQLRepository repository, IMapper mapper)
   {
     _mediator = mediator;
     _repository = repository;
@@ -55,7 +55,6 @@ public class CalculatorController : ControllerBase
   /// <returns>An action result indicating success.</returns>
   [HttpPost("save-installment")]
   public async Task<IActionResult> SaveInstallment([FromBody] Installment calculation)
-
   {
     var newCalculation = _mapper.Map<InstallmentEntity>(calculation);
     _repository.Installments.Add(newCalculation);

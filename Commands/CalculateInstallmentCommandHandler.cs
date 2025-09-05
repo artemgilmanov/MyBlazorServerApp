@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using MyBlazorServerApp.Commands;
-using MyBlazorServerApp.Infrastructure;
+using MyBlazorServerApp.Infrastructure.CalculationRepository;
 using MyBlazorServerApp.Resources;
 
 public class CalculateInstallmentCommandHandler : IRequestHandler<CalculateInstallmentCommand, Installment>

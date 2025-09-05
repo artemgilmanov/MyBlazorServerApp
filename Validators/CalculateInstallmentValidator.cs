@@ -10,9 +10,9 @@ public class CalculateDurationCommandValidator : AbstractValidator<CalculateDura
   public CalculateDurationCommandValidator()
   {
     RuleFor(x => x.Amount)
-        .GreaterThan(0).WithMessage("Amount must be greater than zero.");
+      .GreaterThan(0).WithMessage("Amount must be greater than zero.");
 
     RuleFor(x => x.MonthlyInstallment)
-        .GreaterThan(0).WithMessage("Monthly installment must be greater than zero.");
+      .GreaterThan(0).WithMessage("Monthly installment must be greater than zero.");
   }
 }

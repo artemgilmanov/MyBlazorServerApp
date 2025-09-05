@@ -12,7 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBlazorServerApp.Infrastru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBlazorServerApp.Test", "..\MyBlazorServerApp.Test\MyBlazorServerApp.Test.csproj", "{6E9650A2-4D93-46B1-9284-37172B617812}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBlazorServerApp.Infrastructure", "..\MyBlazorServerApp.Infrastructure\MyBlazorServerApp.Infrastructure.csproj", "{554D7C78-62E7-4953-9299-E8D4B150DAE1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBlazorServerApp.Infrastructure.CalculationRepository", "..\MyBlazorServerApp.Infrastructure\MyBlazorServerApp.Infrastructure.CalculationRepository.csproj", "{554D7C78-62E7-4953-9299-E8D4B150DAE1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBlazorServerApp.Shared", "..\MyBlazorServerApp.Shared\MyBlazorServerApp.Shared.csproj", "{3A1EC41F-7A76-4FE7-86EF-E4AEE2A19754}"
 EndProject

@@ -1,12 +1,10 @@
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using MyBlazorServerApp.Components;
-using MyBlazorServerApp.Infrastructure;
+using MyBlazorServerApp.Infrastructure.CalculationRepository;
+using MyBlazorServerApp.Infrastructure.PostgreSQL;
 using Serilog;
-using System.Net;
 using System.Reflection;
 
 var logsDirectory = "Logs";
@@ -15,6 +13,7 @@ if (!Directory.Exists(logsDirectory))
   Directory.CreateDirectory(logsDirectory);
 }
 
+# region "Configure Serilog"
 var configuration = new ConfigurationBuilder()
   .AddJsonFile("appsettings.json")
   .AddJsonFile("appsettings.Development.json", optional: true)
@@ -22,17 +21,17 @@ var configuration = new ConfigurationBuilder()
   .AddEnvironmentVariables()
   .Build();
 
-// Configure Serilog to read from the built configuration.
 Log.Logger = new LoggerConfiguration()
   .ReadFrom.Configuration(configuration)
   .CreateLogger();
+# endregion
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+  .AddInteractiveServerComponents();
 
 // Configure MediatR to find commands and handlers in the current assembly.
 builder.Services.AddMediatR(cfg =>
@@ -41,18 +40,22 @@ builder.Services.AddMediatR(cfg =>
   cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 });
 
-// Register the ICalculationRepository as a scoped service.
-builder.Services.AddScoped<ICalculationRepository, CalculationRepository>();
-
 // Register Validation.
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
+# region "Configure Repositories"
+// Register PostgreSQLRepository
 //var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-//builder.Services.AddDbContext<Repository>(options =>
-//    options.UseNpgsql(connectionString));
+//builder.Services.AddDbContext<PostgreSQLRepository>(options =>
+//  options.UseNpgsql(connectionString));
 
-builder.Services.AddDbContext<Repository>(options =>
-    options.UseInMemoryDatabase("MyBlazorServerAppDB"));
+// Register UseInMemoryDatabase
+builder.Services.AddDbContext<PostgreSQLRepository>(options =>
+  options.UseInMemoryDatabase("MyBlazorServerAppDB"));
+
+// Register the ICalculationRepository.
+builder.Services.AddScoped<ICalculationRepository, CalculationRepository>();
+# endregion
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
@@ -83,7 +86,7 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+  .AddInteractiveServerRenderMode();
 
 app.MapControllers();
 
