@@ -48,15 +48,9 @@ The codebase demonstrates the use of several specific design patterns to solve c
 * **Serilog**: The logging library used for structured logging. It captures and enriches log events, which can be sent to various sinks like the console, files, or services like Seq.
 * **xUnit, Moq, FluentAssertions**: These are the testing frameworks and libraries used to write unit tests, mock dependencies, and perform fluent assertions, indicating a test-driven or test-friendly development approach.
 
-The combination of these patterns and tools results in a robust, maintainable, and scalable application architecture. The clear separation of concerns, automated validation, and standardized error handling make the system reliable and easy to evolve.
-
 # User Interface (UI) Structure
 
----
-
 The application's user interface is built using **Blazor Server**.
-
----
 
 **Calculator Page (`/`)**
 
@@ -82,15 +76,12 @@ This page is dedicated to displaying the historical data retrieved from the data
 
 # Future Improvements
 
----
-
 **1. Database and Data Persistence**
 
 The current use of an in-memory database (`Microsoft.EntityFrameworkCore.InMemory`) is excellent for rapid prototyping and testing but is not suitable for a production environment. The application is already configured to use **PostgreSQL**, but this feature is commented out.
 
 * **Action:** Enable the PostgreSQL configuration by uncommenting the relevant code in `Program.cs`. This will ensure all saved calculation data persists across application restarts.
 * **Action:** Implement and configure database migrations to manage schema changes over time. This will allow for seamless updates to the database structure as new features are added.
-* **Benefit:** Provides **data durability** and integrity, ensuring that critical business data is not lost when the service is restarted or deployed.
 
 ---
 
@@ -103,7 +94,6 @@ The existing test project (`MyBlazorServerApp.Test`) demonstrates a solid approa
     * Boundary conditions (e.g., very large or very small numbers).
     * Error handling for external dependencies (e.g., database connection failures, network timeouts).
 * **Action:** Introduce a dedicated test suite for the `PostgreSQLRepository` to ensure that data is correctly saved, retrieved, and managed in the actual database.
-* **Benefit:** Increases the **reliability** and stability of the application. Comprehensive testing provides a safety net for future refactoring and feature development, catching bugs before they reach production.
 
 ---
 
@@ -113,17 +103,14 @@ A production microservice requires robust security and monitoring capabilities.
 
 * **Action:** Implement proper authentication and authorization to secure API endpoints, ensuring only authorized users can perform actions like saving calculations.
 * **Action:** Enhance the logging to include more granular details about request processing, especially for failed requests. Configure Serilog to send logs to a centralized logging system like **Seq** or **ELK Stack**, which is already referenced in the dependencies.
-* **Benefit:** Improves the **security posture** of the application and provides better **observability**, making it easier to monitor performance, diagnose issues, and respond to incidents in a production environment.
 
 ---
  
-**4.  Alternative Libraries for AutoMapper and MediatR
+**4.  Alternative Libraries for AutoMapper and MediatR**
 
 Due to potential policy changes requiring subscriptions for certain libraries, it's prudent to consider open-source alternatives to **AutoMapper** and **MediatR** to ensure the project remains free to use and maintain.
 
 #### **Alternatives to AutoMapper**
-
-While AutoMapper is a powerful tool for object-to-object mapping, several alternatives offer similar functionality with varying approaches.
 
 * **Manual Mapping**: For simpler DTOs, manual mapping is often the most straightforward and performant option. It involves writing explicit code to transfer data from one object to another. This approach eliminates a dependency and provides complete control over the mapping process, which is especially useful when business logic is involved.
 * **Mapster**: A convention-based mapping library that is often faster than AutoMapper because it uses expression trees to generate code at compile time. It is a lightweight and high-performance alternative that requires minimal configuration.
@@ -131,10 +118,6 @@ While AutoMapper is a powerful tool for object-to-object mapping, several altern
 
 #### **Alternatives to MediatR**
 
-If a subscription is required for MediatR, you could replace it with a more basic, hand-rolled **Command/Handler pattern** or with a similar, free library.
-
 * **Hand-Rolled Command/Handler Pattern**: You can build a custom, lightweight version of the Command/Handler pattern. This involves creating a `Mediator` class that resolves and executes handlers based on the command type. This provides a clear separation of concerns without an external dependency. This approach would require a bit more boilerplate code but offers complete control and no licensing concerns.
 * **Simple Injector's Decorator Pattern**: If you are already using a dependency injection container like Simple Injector, you can leverage its decorator pattern to implement a similar pipeline behavior as MediatR, where you wrap the main handler with validation or logging decorators. This provides a flexible and powerful way to build the pipeline without a dedicated library.
 * **MassTransit**: While primarily a message bus, **MassTransit** can also be used as an in-process mediator. It is a more robust, but complex, alternative that is well-suited for applications that might need to scale to a distributed message-based architecture in the future.
-
-The choice of alternative depends on the project's specific needs, complexity, and performance requirements. For many applications, a simple, custom-built solution or a lightweight library like Mapster would be a suitable replacement.
