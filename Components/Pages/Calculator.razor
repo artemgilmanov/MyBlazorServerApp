@@ -16,11 +16,11 @@
 
     <div class="tab-group">
       <button @onclick="() => SetMode(CalculationType.Installment)"
-              class="tab-button tab-button-left @(currentMode == CalculationType.Installment ? "tab-active" : "tab-inactive")">
+                     class="tab-button tab-button-left @(currentMode == CalculationType.Installment ? "tab-active" : "tab-inactive")">
         Calculate Installment
       </button>
       <button @onclick="() => SetMode(CalculationType.Duration)"
-              class="tab-button tab-button-right @(currentMode == CalculationType.Duration ? "tab-active" : "tab-inactive")">
+                     class="tab-button tab-button-right @(currentMode == CalculationType.Duration ? "tab-active" : "tab-inactive")">
         Calculate Duration
       </button>
     </div>
@@ -218,6 +218,10 @@
   private async Task SaveCalculation()
   {
     if (lastCalculation == null) return;
+
+    // Log the object to the server console before sending to the API.
+    Console.WriteLine("Saving the following object:");
+    Console.WriteLine(JsonSerializer.Serialize(lastCalculation));
 
     var client = HttpClientFactory.CreateClient("MyHttpClient");
     try
