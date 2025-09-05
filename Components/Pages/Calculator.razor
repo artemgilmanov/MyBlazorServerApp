@@ -16,11 +16,11 @@
 
     <div class="tab-group">
       <button @onclick="() => SetMode(CalculationType.Installment)"
-                     class="tab-button tab-button-left @(currentMode == CalculationType.Installment ? "tab-active" : "tab-inactive")">
+              class="tab-button tab-button-left @(currentMode == CalculationType.Installment ? "tab-active" : "tab-inactive")">
         Calculate Installment
       </button>
       <button @onclick="() => SetMode(CalculationType.Duration)"
-                     class="tab-button tab-button-right @(currentMode == CalculationType.Duration ? "tab-active" : "tab-inactive")">
+              class="tab-button tab-button-right @(currentMode == CalculationType.Duration ? "tab-active" : "tab-inactive")">
         Calculate Duration
       </button>
     </div>
@@ -134,7 +134,7 @@
       if (response.IsSuccessStatusCode)
       {
         var resultDto = await response.Content.ReadFromJsonAsync<Installment>();
-        responseMessage = $"The monthly installment is: {resultDto.Result}";
+        responseMessage = $"The monthly installment is: {resultDto?.Result}";
         lastCalculation = resultDto;
       }
       else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
@@ -182,7 +182,7 @@
       if (response.IsSuccessStatusCode)
       {
         var resultDto = await response.Content.ReadFromJsonAsync<Duration>();
-        responseMessage = $"The number of installments is: {resultDto.Result}";
+        responseMessage = $"The number of installments is: {resultDto?.Result}";
         lastCalculation = resultDto;
       }
       else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
